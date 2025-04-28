@@ -7,7 +7,7 @@ import config from "../config";
 import "./NewNote.css";
 import { API } from "aws-amplify";
 import { NoteType } from "../types/note";
-//import { onError } from "../lib/errorLib";
+import { onError } from "../lib/errorLib";
 import { s3Upload } from "../lib/awsLib";
 
 export default function NewNote() {
