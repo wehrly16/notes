@@ -8,6 +8,10 @@ const config = {
     REGION: import.meta.env.VITE_REGION,
     URL: import.meta.env.VITE_API_URL,
   },
+  apiGateway2: {
+    REGION: import.meta.env.VITE_REGION,
+    URL: import.meta.env.VITE_API_URL2,
+  },
   cognito: {
     REGION: import.meta.env.VITE_REGION,
     USER_POOL_ID: import.meta.env.VITE_USER_POOL_ID,

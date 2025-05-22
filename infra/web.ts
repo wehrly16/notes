@@ -1,4 +1,4 @@
-import { api } from "./api";
+import { api, api2 } from "./api";
 import { bucket } from "./storage";
 import { userPool, identityPool, userPoolClient } from "./auth";
 
@@ -13,6 +13,7 @@ export const frontend = new sst.aws.StaticSite("Frontend", {
   environment: {
     VITE_REGION: region,
     VITE_API_URL: api.url,
+    VITE_API_URL2: api2.url,
     VITE_BUCKET: bucket.name,
     VITE_USER_POOL_ID: userPool.id,
     VITE_IDENTITY_POOL_ID: identityPool.id,

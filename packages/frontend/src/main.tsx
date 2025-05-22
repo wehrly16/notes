@@ -1,4 +1,3 @@
-
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -29,6 +28,11 @@ Amplify.configure({
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION,
       },
+      {
+        name: "checklists",
+        endpoint: config.apiGateway2.URL,
+        region: config.apiGateway2.REGION,
+      }
     ],
   },
 });
