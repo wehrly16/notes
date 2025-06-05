@@ -17,9 +17,10 @@ export const main = Util.handler(async (event) => {
     },
     // 'UpdateExpression' defines the attributes to be updated
     // 'ExpressionAttributeValues' defines the value in the update expression
-    UpdateExpression: "SET listName = :listName",
+    UpdateExpression: "SET listName = :listName, done = :done",
     ExpressionAttributeValues: {
       ":listName": data.listName,
+      ":done": data.done,
     },
   };
 

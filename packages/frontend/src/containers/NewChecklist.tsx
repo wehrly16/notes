@@ -3,12 +3,10 @@ import Form from "react-bootstrap/Form";
 import Stack from "react-bootstrap/Stack";
 import {useNavigate} from "react-router-dom";
 import LoaderButton from "../components/LoaderButton";
-//import config from "../config";
 import "./NewChecklist.css";
 import { API } from "aws-amplify";
 import { ChecklistType } from "../types/checklist";
 import { onError } from "../lib/errorLib";
-//import { s3Upload } from "../lib/awsLib";
 
 export default function NewChecklist() {
   const nav = useNavigate();
@@ -44,7 +42,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     //  ? await s3Upload(file.current)
     //  : undefined;
 
-    await createChecklist({ listName });
+    await createChecklist({ listName, done: false });
     nav("/");
   } catch (e) {
     onError(e);

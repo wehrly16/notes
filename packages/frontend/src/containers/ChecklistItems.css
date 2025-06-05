@@ -1,0 +1,31 @@
+.checklistItems .fw-bold2 {
+    color: hsla(34, 98%, 43%, 0.945);
+    /*font-weight: bold;*/
+}
+
+.checklistItems .createNew {
+    color: green;
+    font-weight: bold;
+    margin-inline-start: 12px;
+}
+
+.checklistItems .box {
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    border: 1px solid hwb(0 32% 67%);
+   /* background-color: black;*/
+    border-bottom: 5px solid #000000;
+}
+
+.checklistItems .sortButton {
+    background-color: hwb(276 1% 55% / 0.856);
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    margin-left: 600px;    
+    position: relative;
+    white-space: nowrap;
+}

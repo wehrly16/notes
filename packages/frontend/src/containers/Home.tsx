@@ -57,7 +57,7 @@ export default function Home() {
     return (
       <>
         <Nav.Link as={Link} to="/notes/new">        
-          <ListGroup.Item action className="py-3 text-nowrap text-truncate">
+          <ListGroup.Item action className="box">
             <BsPencilSquare size={17} />
             <span className="ms-2 fw-bold">Create a new note</span>
           </ListGroup.Item>
@@ -82,25 +82,39 @@ export default function Home() {
     return (
       <>
         <Nav.Link as={Link} to="/checklists/new">
-          <ListGroup.Item action className="py-3 text-nowrap text-truncate">
+          <ListGroup.Item action className="box">
             <BsPencilSquare size={17} />
             <span className="ms-2 fw-bold">Create a new checklist</span>
           </ListGroup.Item>
         </Nav.Link>
 
-        {checklists.map(({ checklistId, listName, createdAt }) => (
+        {checklists.map(({ checklistId, listName, done, createdAt }) => (
           <Nav.Link as={Link} key={checklistId} to={`/checklists/${checklistId}/items`}>
             <ListGroup.Item action className="text-nowrap text-truncate">
+            <div className={`flex-grow-1 ${done ? 'text-decoration-line-through text-muted' : ''}`}>
               <span className="fw-bold">{listName}</span>
               <br />
               <span className="text-muted">
                 Created: {formatDate(createdAt)}
               </span>
+            </div>
             </ListGroup.Item>
           </Nav.Link>
         ))}
       </>
     );
+  }
+
+  function handleSortList() {
+    const sortedchecklists = checklists.slice().sort((a, b) => Number(a.done) - Number(b.done));
+    setChecklists(sortedchecklists);
+  }
+
+  function handleSortNotes() {
+    const sortedNotes = notes.slice().sort((a, b) => 
+      a.content.trim().split("\n")[0].localeCompare(b.content.trim().split("\n")[0])
+    );
+    setNotes(sortedNotes);
   }
 
   function renderLander() {
@@ -118,10 +132,16 @@ export default function Home() {
         <Row>
           <Col>
             <h2 className="pb-3 mt-4 mb-3 border-bottom">Your Notes</h2>
+            <div className="d-flex justify-content-end mb-1">
+              <button className="sortButton" onClick={() => {handleSortNotes()}}>Sort Notes</button>
+            </div>
             <ListGroup>{!isLoading && renderNotesList(notes)}</ListGroup>
           </Col>
           <Col>
             <h2 className="pb-3 mt-4 mb-3 border-bottom">Your Checklists</h2>
+            <div className="d-flex justify-content-end mb-1">
+              <button className="sortButton" onClick={() => {handleSortList()}}>Sort List</button>
+            </div>
             <ListGroup>{!isLoading && renderChecklistsList(checklists)}</ListGroup>
           </Col>
         </Row>

@@ -22,6 +22,7 @@ export default function ChecklistItems() {
   useEffect(() => {
     async function onLoad() {
       try {
+        //const sortedItems = checklistItems.slice().sort((a, b) => Number(a.done) - Number(b.done));
         const [items, checklistData] = await Promise.all([
           loadChecklistItems(),
           loadChecklist()
@@ -44,6 +45,43 @@ export default function ChecklistItems() {
     return API.get("checklists", `/checklists/${id}`, {});
   }
 
+  async function handleCheckAllItems(id: string | undefined, done: boolean, e: React.ChangeEvent<HTMLInputElement>) {
+    if (!id) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      // Update checklist status
+      await API.put("checklists", `/checklists/${id}`, {
+        body: {
+          listName: checklist?.listName,
+          done: done
+        }
+      });
+
+      // Update all items in parallel
+      await Promise.all(
+        checklistItems.map(item => 
+          API.put("checklists", `/checklists/${id}/items/${item.itemId}`, {
+            body: {
+              content: item.content,
+              done: done
+            }
+          })
+        )
+      );
+      
+      // Update local state
+      setChecklistItems(items => 
+        items.map(item => ({ ...item, done }))
+      );
+      setChecklist(prev => prev ? { ...prev, done } : null);
+    } catch (e) {
+      onError(e);
+    }
+  }
+
   async function handleCheckboxChange(itemId: string | undefined, done: boolean, e: React.ChangeEvent<HTMLInputElement>) {
     if (!itemId) return;
     
@@ -54,6 +92,7 @@ export default function ChecklistItems() {
       const item = checklistItems.find(item => item.itemId === itemId);
       if (!item) return;
 
+      // Update the item
       await API.put("checklists", `/checklists/${id}/items/${itemId}`, {
         body: {
           content: item.content,
@@ -61,11 +100,28 @@ export default function ChecklistItems() {
         }
       });
       
+      // Update local state for items
       setChecklistItems(items => 
         items.map(item => 
           item.itemId === itemId ? { ...item, done } : item
         )
       );
+
+      // Check if all items are done
+      const allItemsDone = checklistItems.every(item => 
+        item.itemId === itemId ? done : item.done
+      );
+
+      // Update checklist status if needed
+      if (checklist?.done !== allItemsDone) {
+        await API.put("checklists", `/checklists/${id}`, {
+          body: {
+            listName: checklist?.listName,
+            done: allItemsDone
+          }
+        });
+        setChecklist(prev => prev ? { ...prev, done: allItemsDone } : null);
+      }
     } catch (e) {
       onError(e);
     }
@@ -78,12 +134,24 @@ export default function ChecklistItems() {
   function renderChecklistItemsList(checklistItems: ChecklistItemType[]) {
     return (
       <>
+
         <Nav.Link as={Link} to={`/checklists/${id}/items/new`}>        
-          <ListGroup.Item action className="py-3 text-nowrap text-truncate">
+          <ListGroup.Item action className="box">
             <BsPencilSquare size={17} />
-            <span className="ms-2 fw-bold">Create a new item</span>
+            <span className="createNew">Create a new item</span>
           </ListGroup.Item>
-        </Nav.Link>
+        </Nav.Link>       
+
+        <ListGroup.Item className="d-flex align-items-center">
+          <Form.Check
+            type="checkbox"
+            checked={checklistItems.length > 0 && checklistItems.every(item => item.done)}
+            onChange={(e) => handleCheckAllItems(id, e.target.checked, e)}
+            className="me-3"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <span className="fw-bold2">Check All Items</span>
+        </ListGroup.Item>       
 
         {checklistItems.map(({ itemId, content, done, createdAt }) => (
           <Nav.Link as={Link} key={itemId} to={`/checklists/${id}/items/${itemId}`}>
@@ -107,6 +175,18 @@ export default function ChecklistItems() {
         ))}
       </>
     );
+  }
+
+  function handleSortItems() {
+    const sortedItems = checklistItems.slice().sort((a, b) => {
+      // First sort by done status
+      if (a.done !== b.done) {
+        return Number(a.done) - Number(b.done);
+      }
+      // Then sort by content alphabetically
+      return a.content.localeCompare(b.content);
+    });
+    setChecklistItems(sortedItems);
   }
 
   function deleteChecklist() {
@@ -139,6 +219,7 @@ export default function ChecklistItems() {
     return (
       <div className="checklistItems">
         <h2 className="pb-3 mt-4 mb-3 border-bottom">{checklist?.listName}</h2>
+        <button className="sortButton" onClick={() => {handleSortItems()}}>Sort Items</button>
         <ListGroup>{!isLoading && renderChecklistItemsList(checklistItems)}</ListGroup>
         <Stack gap={1} className="mt-4">
           <LoaderButton

@@ -7,3 +7,23 @@
   font-family: "Open Sans", sans-serif;
   font-weight: 600;
 }
+
+.Home .box {
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  border: 1px solid hwb(0 32% 67%);
+ /* background-color: black;*/
+  border-bottom: 5px solid #000000;
+}
+
+.Home .sortButton {
+    background-color: #403e55da;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 3px 8px;
+    margin-bottom: 5px;
+    float: right;
+    white-space: nowrap;
+}

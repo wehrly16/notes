@@ -16,6 +16,7 @@ export const main = Util.handler(async (event) => {
       userId: event.requestContext.authorizer?.iam.cognitoIdentity.identityId || "TEST-USER-123",
       checklistId: uuid.v1(),
       listName: data.listName,
+      done: false,
       createdAt: Date.now(),
     },
   };
